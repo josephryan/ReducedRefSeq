@@ -9,7 +9,7 @@ our $GunzipError;
 use IO::Uncompress::Gunzip qw($GunzipError);
 use JFR::Fasta;
 
-our $PROGRAM_NAME = 'build_humref_w_one_entry_per_gene.pl';
+our $PROGRAM_NAME = 'reduce_refseq';
 our $VERSION = 0.01;
 our $AUTHOR  = 'Joseph F. Ryan <joseph.ryan@whitney.ufl.edu>';
 
@@ -87,7 +87,7 @@ __END__
 
 =head1 NAME
 
-B<build_humref_w_one_entry_per_gene.pl> - make FASTA file of RefSeq file including NCBI gene name in defline and only one isoform of that gene per gene
+B<reduce_refseq> - make FASTA file of RefSeq file including NCBI gene name in defline and only one isoform of that gene per gene
 
 =head1 AUTHOR
 
@@ -95,7 +95,7 @@ Joseph F. Ryan <joseph.ryan@whitney.ufl.edu>
 
 =head1 SYNOPSIS
 
-build_humref_w_one_entry_per_gene.pl --fasta=FASTA --gene2accession=GENE2ACCESSIONFILE [--help] [--version]
+reduce_refseq --fasta=FASTA --gene2accession=GENE2ACCESSIONFILE [--help] [--version]
 
 =head1 DESCRIPTION
 
