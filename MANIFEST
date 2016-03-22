@@ -3,4 +3,4 @@ LICENSE
 MANIFEST
 Makefile.PL
 README.md
-build_humref_w_one_entry_per_gene.pl
+reduce_refseq
