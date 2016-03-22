@@ -11,10 +11,10 @@ DEPENDENCIES
 
 HumRef2015
 ----------
-HumRef2015 was built on 7/3/15 with the following commands:
-Note: protein.fa.gz was last updated 3/25/15 on NCBI FTP site
-Note: gene2accession.gz was last updated 7/3/15 on NCBI FTP site
-Note: Version 0.01 of reduce_refseq was used
+- HumRef2015 was built on 7/3/15 with the following commands:
+- Note: protein.fa.gz was last updated 3/25/15 on NCBI FTP site
+- Note: gene2accession.gz was last updated 7/3/15 on NCBI FTP site
+- Note: Version 0.01 of reduce_refseq was used
 
     lwp-download ftp://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/H_sapiens/protein/protein.fa.gz
 
