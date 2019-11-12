@@ -3,6 +3,8 @@ NOTE
 
 An alternative to using reduce_refseq is to use RefSeq Select (https://www.ncbi.nlm.nih.gov/refseq/refseq_select/) To download RefSeq Select in FASTA go to either NCBI nucleotide (https://www.ncbi.nlm.nih.gov/nucleotide) or NCBI protein (https://www.ncbi.nlm.nih.gov/protein) and enter the following query `Refseq_select[filter] AND Homo sapiens[ORGN]`. Then from the "Send To" pull-down menu choose "File" as the destination. This should produce a similar set of sequences, but the RefSeq Select method is more sophisticated in its methodology for which represenative sequence is chosen.
 
+An advantage of reduce_refseq is that the definition lines are compact with the gene name (eg. HOXA10) followed by the accession number. 
+
 ABOUT
 -----
 
