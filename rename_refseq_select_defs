@@ -1,0 +1,131 @@
+#!perl
+
+use strict;
+use warnings;
+use Getopt::Long;
+use Pod::Usage;
+use FileHandle;
+our $GunzipError;
+use IO::Uncompress::Gunzip qw($GunzipError);
+use JFR::Fasta;
+use Data::Dumper;
+
+our $PROGRAM_NAME = 'reduce_refseq';
+our $VERSION = 0.01;
+our $AUTHOR  = 'Joseph F. Ryan <joseph.ryan@whitney.ufl.edu>';
+
+#  ftp://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/H_sapiens/protein/protein.fa.gz
+#  ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz
+
+MAIN: {
+    my $rh_opts = process_options();
+    my $rh_ids  = get_ids($rh_opts);
+    print_fasta($rh_opts,$rh_ids);
+}
+
+sub print_fasta {
+    my $rh_opts = shift;
+    my $rh_ids  = shift;
+    my %seen = ();
+    my $fp = JFR::Fasta->new($rh_opts->{'fasta'});
+    while (my $rec = $fp->get_record()) {
+        $rec->{'def'} =~ m/^>(\S+)/;
+        my $acc = $1;
+        next if ($seen{$rh_ids->{$acc}});
+        print ">$rh_ids->{$acc} $acc\n";
+        print "$rec->{'seq'}\n";
+        $seen{$rh_ids->{$acc}}++;
+    }
+}
+
+sub get_ids {
+    my $rh_opts = shift;
+    my $fh = get_fh($rh_opts->{'gene2accession'});
+    my %ids = ();
+    while (my $line = <$fh>) {
+        chomp $line;
+        next if ($line =~ m/^#/);
+        my @fields = split /\t/, $line;
+        $ids{$fields[5]} = $fields[15];
+    }
+    return \%ids;
+}
+
+sub process_options {
+    my $rh_opts = {};
+    my $opt_results = Getopt::Long::GetOptions(
+                                 "help" => \$rh_opts->{'help'},
+                              "version" => \$rh_opts->{'version'},
+                              "fasta=s" => \$rh_opts->{'fasta'},
+                     "gene2accession=s" => \$rh_opts->{'gene2accession'});
+    die "$VERSION\n" if ($rh_opts->{'version'});
+    pod2usage({-exitval => 0, -verbose => 2}) if $rh_opts->{'help'};
+    unless ($rh_opts->{'fasta'} && $rh_opts->{'gene2accession'}) {
+        warn "missing --fasta\n" unless ($rh_opts->{'fasta'});
+        warn "missing --gene2accession\n" unless ($rh_opts->{'gene2accession'});
+        usage();
+    }
+    return $rh_opts; 
+}
+
+sub usage {
+    die "usage: $0 --fasta=FASTA --gene2accession=GENE2ACCESSIONFILE [--help] [--version]\n";
+}
+
+sub get_fh {
+    my $file = shift;
+    my $fh = {};
+    if ($file =~ m/\.gz$/i) {
+        $fh = IO::Uncompress::Gunzip->new($file)
+            or die "IO::Uncompress::Gunzip of $file failed: $GunzipError\n";
+    } else {
+        $fh = FileHandle->new($file,'r');
+        die "cannot open $file: $!\n" unless(defined $fh);
+    }
+    return $fh;
+}
+
+__END__
+
+=head1 NAME
+
+B<reduce_refseq> - make FASTA file of RefSeq file including NCBI gene name in defline and only one isoform of that gene per gene
+
+=head1 AUTHOR
+
+Joseph F. Ryan <joseph.ryan@whitney.ufl.edu>
+
+=head1 SYNOPSIS
+
+reduce_refseq --fasta=FASTA --gene2accession=GENE2ACCESSIONFILE [--help] [--version]
+
+=head1 DESCRIPTION
+
+=head1 BUGS
+
+Please report them to <joseph.ryan@whitney.ufl.edu>
+
+=head1 OPTIONS
+
+=over 2
+
+=back
+
+=head1 COPYRIGHT
+
+Copyright (C) 2015 Joseph F. Ryan
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+=cut
